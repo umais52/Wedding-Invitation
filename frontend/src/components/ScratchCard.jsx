@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Clock } from 'lucide-react';
 
-export default function ScratchCard({ t }) {
+function SingleScratchCard({ icon: Icon, title, subtitle, width = 280, height = 160 }) {
   const canvasRef = useRef(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isScratching, setIsScratching] = useState(false);
@@ -27,14 +27,14 @@ export default function ScratchCard({ t }) {
       canvas.width * 0.3, canvas.height * 0.3, 10,
       canvas.width * 0.5, canvas.height * 0.5, canvas.width * 0.6
     );
-    shineGrad.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+    shineGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
     shineGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
     ctx.fillStyle = shineGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Add centered text
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-    ctx.font = 'italic 18px "Cormorant Garamond", serif';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = 'italic 16px "Cormorant Garamond", serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('✦ Scratch to Reveal ✦', canvas.width / 2, canvas.height / 2);
@@ -48,7 +48,7 @@ export default function ScratchCard({ t }) {
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 24, 0, Math.PI * 2);
+    ctx.arc(x, y, 22, 0, Math.PI * 2);
     ctx.fill();
 
     checkScratchPercentage(canvas, ctx);
@@ -93,51 +93,69 @@ export default function ScratchCard({ t }) {
   const handleMouseLeave = () => setIsScratching(false);
 
   const handleTouchStart = (e) => {
-    e.preventDefault();
     if (!e.touches[0]) return;
     const { x, y } = getCoords(e.touches[0], canvasRef.current);
     scratch(x, y);
   };
 
   const handleTouchMove = (e) => {
-    e.preventDefault();
     if (!e.touches[0]) return;
     const { x, y } = getCoords(e.touches[0], canvasRef.current);
     scratch(x, y);
   };
 
   return (
+    <div className="canvas-wrapper single-card">
+      <div className="scratch-underlayer">
+        <Icon size={24} color="var(--primary-rose)" style={{ marginBottom: '6px' }} />
+        <h3 style={{ fontFamily: 'var(--font-heading)', color: 'var(--primary-rose-dark)', fontSize: '1.25rem', fontWeight: 700, textAlign: 'center', lineHeight: '1.3' }}>
+          {title}
+        </h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px', textAlign: 'center' }}>
+          {subtitle}
+        </p>
+      </div>
+
+      {!isRevealed && (
+        <canvas
+          ref={canvasRef}
+          width={width}
+          height={height}
+          className="scratch-canvas"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+        />
+      )}
+    </div>
+  );
+}
+
+export default function ScratchCard({ t }) {
+  return (
     <section className="scratch-section reveal-section">
-      <h2 className="section-title-script">
-        {isRevealed ? t.scratchedHeader : t.scratchTitle}
-      </h2>
+      <h2 className="section-title-script">{t.scratchTitle}</h2>
       <div className="ornament-line">♥</div>
 
-      <div className="canvas-wrapper">
-        <div className="scratch-underlayer">
-          <Sparkles size={24} color="var(--primary-rose)" style={{ marginBottom: '6px' }} />
-          <h3 style={{ fontFamily: 'var(--font-heading)', color: 'var(--primary-rose-dark)', fontSize: '1.5rem', fontWeight: 700 }}>
-            {t.weddingDateFull}
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginTop: '4px' }}>
-            {t.weddingTimeFull}
-          </p>
-        </div>
-
-        {!isRevealed && (
-          <canvas
-            ref={canvasRef}
-            width={400}
-            height={180}
-            className="scratch-canvas"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-          />
-        )}
+      <div className="scratch-grid">
+        <SingleScratchCard
+          icon={Calendar}
+          title={t.weddingDateFull}
+          subtitle={t.weddingTimeFull}
+        />
+        <SingleScratchCard
+          icon={MapPin}
+          title={t.venueName}
+          subtitle={t.venueAddress}
+        />
+        <SingleScratchCard
+          icon={Clock}
+          title={t.reception}
+          subtitle={t.receptionTime}
+        />
       </div>
     </section>
   );
