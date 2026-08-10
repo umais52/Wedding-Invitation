@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Calendar, MapPin, Clock } from 'lucide-react';
+import { Calendar, Heart, Sparkles } from 'lucide-react';
 
 function SingleScratchCard({ icon: Icon, title, subtitle, width = 280, height = 160 }) {
   const canvasRef = useRef(null);
@@ -143,18 +143,18 @@ export default function ScratchCard({ t }) {
       <div className="scratch-grid">
         <SingleScratchCard
           icon={Calendar}
-          title={t.weddingDateFull}
-          subtitle={t.weddingTimeFull}
+          title={t.nikahTitle}
+          subtitle={t.nikahDate}
         />
         <SingleScratchCard
-          icon={MapPin}
-          title={t.venueName}
-          subtitle={t.venueAddress}
+          icon={Heart}
+          title={t.baraatTitle}
+          subtitle={t.baraatDate}
         />
         <SingleScratchCard
-          icon={Clock}
-          title={t.reception}
-          subtitle={t.receptionTime}
+          icon={Sparkles}
+          title={t.valimaTitle}
+          subtitle={t.valimaDate}
         />
       </div>
     </section>
