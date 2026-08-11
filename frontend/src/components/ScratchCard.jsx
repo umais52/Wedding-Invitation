@@ -1,13 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Calendar, Heart, Sparkles, Lock, KeyRound, X } from 'lucide-react';
 
-function SingleScratchCard({ icon: Icon, title, subtitle, t, width = 280, height = 160 }) {
+function SingleScratchCard({ icon: Icon, title, subtitle, passcode = '00', t, width = 280, height = 160 }) {
   const canvasRef = useRef(null);
   const [locked, setLocked] = useState(true);
   const [chainPulled, setChainPulled] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [code, setCode] = useState('');
   const [shaking, setShaking] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isScratching, setIsScratching] = useState(false);
   const [canvasReady, setCanvasReady] = useState(false);
@@ -62,28 +63,30 @@ function SingleScratchCard({ icon: Icon, title, subtitle, t, width = 280, height
   // Submit password
   const handleSubmit = (e) => {
     e.preventDefault();
-    const valid = ['2026', 'usama', 'anoosha', '786', 'wedding'];
-    if (valid.includes(code.trim().toLowerCase())) {
+    const entered = code.trim().toLowerCase();
+    const valid = [passcode.toLowerCase(), '2026', 'usama', 'anoosha'];
+    if (valid.includes(entered)) {
       setShowInput(false);
       setLocked(false);
+      setHasError(false);
     } else {
-      // Wrong → shake card, then snap chain back
+      // Wrong → shake card, keep password overlay open, clear code
       setShaking(true);
+      setHasError(true);
       setTimeout(() => {
-        setShowInput(false);
-        setChainPulled(false);
-        setCode('');
         setShaking(false);
-      }, 800);
+        setCode('');
+      }, 600);
     }
   };
 
-  // Cancel password entry → snap chain back
+  // Cancel password entry → snap chain back (explicit user action)
   const handleCancel = (e) => {
     e.stopPropagation();
     setShowInput(false);
     setChainPulled(false);
     setCode('');
+    setHasError(false);
   };
 
   // ---- Scratch logic (unchanged) ----
@@ -158,8 +161,10 @@ function SingleScratchCard({ icon: Icon, title, subtitle, t, width = 280, height
               <Heart size={40} fill="#B75D69" stroke="#7a313c" strokeWidth={1.5} />
               <Lock size={16} className="inner-lock" />
             </div>
-            <span className="tap-label">{t?.tapToUnlock || 'TAP TO UNLOCK'}</span>
           </div>
+
+          {/* Bottom tap label */}
+          <span className="tap-label">{t?.tapToUnlock || 'TAP TO UNLOCK'}</span>
         </div>
       )}
 
@@ -182,7 +187,11 @@ function SingleScratchCard({ icon: Icon, title, subtitle, t, width = 280, height
             />
             <button type="submit" className="pass-btn">{t?.unlockBtn || 'Unlock'}</button>
           </form>
-          <p className="pass-hint">{t?.passcodeHint || 'Hint: 2026'}</p>
+          {hasError && (
+            <p className="pass-hint pass-hint-error">
+              {t?.wrongPasscode || 'Wrong passcode! Try again'}
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -196,9 +205,9 @@ export default function ScratchCard({ t }) {
       <div className="ornament-line">♥</div>
 
       <div className="scratch-grid">
-        <SingleScratchCard icon={Calendar} title={t.nikahTitle} subtitle={t.nikahDate} t={t} />
-        <SingleScratchCard icon={Heart} title={t.baraatTitle} subtitle={t.baraatDate} t={t} />
-        <SingleScratchCard icon={Sparkles} title={t.valimaTitle} subtitle={t.valimaDate} t={t} />
+        <SingleScratchCard icon={Calendar} title={t.nikahTitle} subtitle={t.nikahDate} passcode="00" t={t} />
+        <SingleScratchCard icon={Heart} title={t.baraatTitle} subtitle={t.baraatDate} passcode="01" t={t} />
+        <SingleScratchCard icon={Sparkles} title={t.valimaTitle} subtitle={t.valimaDate} passcode="10" t={t} />
       </div>
     </section>
   );

@@ -908,6 +908,11 @@ body {
   opacity: 0;
 }
 
+.chains-pulled .tap-label {
+  transform: translate(-50%, 15px) scale(0.8);
+  opacity: 0;
+}
+
 /* Beating heart lock badge */
 .heart-lock-badge {
   position: relative;
@@ -915,6 +920,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   transition: transform 0.5s ease, opacity 0.4s ease;
 }
 
@@ -946,14 +952,21 @@ body {
 }
 
 .tap-label {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
   font-family: var(--font-body);
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 2px;
   color: var(--accent-gold-light);
-  margin-top: 6px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+  white-space: nowrap;
+  pointer-events: none;
   animation: tapGlow 1.8s ease-in-out infinite alternate;
+  transition: transform 0.5s ease, opacity 0.4s ease;
 }
 
 @keyframes tapGlow {
@@ -966,14 +979,17 @@ body {
   position: absolute;
   inset: 0;
   z-index: 25;
-  background: rgba(28,18,20,0.96);
+  background: rgba(28, 18, 20, 0.96);
   backdrop-filter: blur(6px);
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   animation: passIn 0.3s ease forwards;
+  border-radius: 12px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 @keyframes passIn {
@@ -985,20 +1001,22 @@ body {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.12);
   border: none;
   color: #fff;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 30;
+  transition: background 0.2s ease;
 }
 
 .pass-close:hover {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .pass-title {
@@ -1008,19 +1026,21 @@ body {
   font-family: var(--font-heading);
   font-size: 1rem;
   color: #fff;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .pass-form {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
-  max-width: 220px;
+  max-width: 230px;
+  box-sizing: border-box;
 }
 
 .pass-input {
   flex: 1;
-  padding: 6px 10px;
+  min-width: 0;
+  padding: 7px 10px;
   border-radius: 6px;
   border: 1.5px solid var(--primary-rose);
   background: #fff;
@@ -1028,15 +1048,17 @@ body {
   color: var(--text-primary);
   outline: none;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .pass-input:focus {
   border-color: var(--accent-gold);
-  box-shadow: 0 0 6px rgba(212,175,55,0.5);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
 }
 
 .pass-btn {
-  padding: 6px 14px;
+  flex-shrink: 0;
+  padding: 7px 14px;
   background: linear-gradient(135deg, var(--primary-rose), var(--primary-rose-dark));
   color: #fff;
   border: none;
@@ -1044,12 +1066,29 @@ body {
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.pass-btn:hover {
+  opacity: 0.95;
+}
+
+.pass-btn:active {
+  transform: scale(0.97);
 }
 
 .pass-hint {
   font-size: 0.7rem;
   color: var(--text-muted);
-  margin-top: 6px;
+  margin-top: 8px;
+  transition: color 0.3s ease;
+}
+
+.pass-hint-error {
+  color: #FF6B6B !important;
+  font-weight: 600;
 }
 
 /* Shake on wrong password */
