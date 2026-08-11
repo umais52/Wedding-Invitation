@@ -148,8 +148,6 @@ export default function OpeningCover({ isOpen, onOpen, t }) {
           </button>
         </div>
 
-        <p className="cover-hint">{t.coverHint}</p>
-
         {/* Bottom heartbeat line */}
         <div className="heartbeat-line-wrapper bottom-heartbeat">
           <svg className="heartbeat-svg" viewBox="0 0 400 60" preserveAspectRatio="none">
