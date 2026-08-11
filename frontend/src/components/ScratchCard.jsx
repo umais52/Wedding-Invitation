@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Calendar, Heart, Sparkles, Lock, KeyRound, X } from 'lucide-react';
 
-function SingleScratchCard({ icon: Icon, title, subtitle, passcode = '00', t, width = 280, height = 160 }) {
+function SingleScratchCard({ icon: Icon, title, subtitle, passcode = '00', eventKey, eventDate, onUnlock, t, width = 280, height = 160 }) {
   const canvasRef = useRef(null);
   const [locked, setLocked] = useState(true);
   const [chainPulled, setChainPulled] = useState(false);
@@ -69,6 +69,9 @@ function SingleScratchCard({ icon: Icon, title, subtitle, passcode = '00', t, wi
       setShowInput(false);
       setLocked(false);
       setHasError(false);
+      if (onUnlock) {
+        onUnlock({ key: eventKey, date: eventDate, title });
+      }
     } else {
       // Wrong → shake card, keep password overlay open, clear code
       setShaking(true);
@@ -198,16 +201,43 @@ function SingleScratchCard({ icon: Icon, title, subtitle, passcode = '00', t, wi
   );
 }
 
-export default function ScratchCard({ t }) {
+export default function ScratchCard({ t, onUnlockCard }) {
   return (
     <section className="scratch-section reveal-section">
       <h2 className="section-title-script">{t.scratchTitle}</h2>
       <div className="ornament-line">♥</div>
 
       <div className="scratch-grid">
-        <SingleScratchCard icon={Calendar} title={t.nikahTitle} subtitle={t.nikahDate} passcode="00" t={t} />
-        <SingleScratchCard icon={Heart} title={t.baraatTitle} subtitle={t.baraatDate} passcode="01" t={t} />
-        <SingleScratchCard icon={Sparkles} title={t.valimaTitle} subtitle={t.valimaDate} passcode="10" t={t} />
+        <SingleScratchCard
+          icon={Calendar}
+          title={t.nikahTitle}
+          subtitle={t.nikahDate}
+          passcode="00"
+          eventKey="nikah"
+          eventDate="2026-11-27T10:00:00"
+          onUnlock={onUnlockCard}
+          t={t}
+        />
+        <SingleScratchCard
+          icon={Heart}
+          title={t.baraatTitle}
+          subtitle={t.baraatDate}
+          passcode="01"
+          eventKey="baraat"
+          eventDate="2026-12-04T10:00:00"
+          onUnlock={onUnlockCard}
+          t={t}
+        />
+        <SingleScratchCard
+          icon={Sparkles}
+          title={t.valimaTitle}
+          subtitle={t.valimaDate}
+          passcode="10"
+          eventKey="valima"
+          eventDate="2026-12-07T10:00:00"
+          onUnlock={onUnlockCard}
+          t={t}
+        />
       </div>
     </section>
   );

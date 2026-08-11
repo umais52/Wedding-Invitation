@@ -16,8 +16,31 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(true);
   const [lang, setLang] = useState('en');
   const [wishes, setWishes] = useState([]);
+  const [unlockedCards, setUnlockedCards] = useState([]);
 
   const t = translations[lang];
+
+  const handleUnlockCard = useCallback((cardData) => {
+    setUnlockedCards((prev) => {
+      if (prev.some((c) => c.key === cardData.key)) return prev;
+      return [...prev, cardData];
+    });
+  }, []);
+
+  // Countdown target logic:
+  // - Among all currently unlocked cards, countdown always targets the EARLIEST event date.
+  // - If no cards unlocked yet -> default to Nikah date (Nov 27, 2026).
+  const getActiveCountdown = () => {
+    if (unlockedCards.length > 0) {
+      const sorted = [...unlockedCards].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
+      return { targetDate: sorted[0].date, eventTitle: sorted[0].title };
+    }
+    return { targetDate: '2026-11-27T10:00:00', eventTitle: t.nikahTitle };
+  };
+
+  const { targetDate: countdownTargetDate, eventTitle: countdownEventTitle } = getActiveCountdown();
 
   // =============================================
   // Scroll Reveal Animation (IntersectionObserver)
@@ -149,14 +172,14 @@ export default function App() {
       </section>
 
       {/* Scratch Card Section */}
-      <ScratchCard t={t} />
+      <ScratchCard t={t} onUnlockCard={handleUnlockCard} />
 
       {/* Photo Slideshow - below Scratch Card */}
       <PhotoSlideshow t={t} />
 
       {/* Countdown Timer */}
       <div className="reveal-section">
-        <CountdownTimer t={t} />
+        <CountdownTimer t={t} targetDate={countdownTargetDate} eventTitle={countdownEventTitle} />
       </div>
 
       {/* Program Timeline */}

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-export default function CountdownTimer({ t }) {
-  const targetDate = new Date('2026-11-30T10:20:00').getTime();
-
-  const calculateTimeLeft = () => {
+export default function CountdownTimer({ t, targetDate = '2026-11-27T10:00:00', eventTitle }) {
+  const calculateTimeLeft = useCallback(() => {
+    const target = new Date(targetDate).getTime();
     const now = new Date().getTime();
-    const difference = targetDate - now;
+    const difference = target - now;
 
     if (difference <= 0) {
       return { days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -17,22 +16,23 @@ export default function CountdownTimer({ t }) {
       minutes: Math.floor((difference / 1000 / 60) % 60),
       seconds: Math.floor((difference / 1000) % 60),
     };
-  };
+  }, [targetDate]);
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
+    setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [calculateTimeLeft]);
 
   return (
     <section className="countdown-section">
       <h2 className="section-title-script" style={{ fontSize: '3.2rem' }}>
-        {t.countdownTitle}
+        {t.countdownTitle} {eventTitle ? `(${eventTitle})` : ''}
       </h2>
       <div className="ornament-line">✦</div>
 
