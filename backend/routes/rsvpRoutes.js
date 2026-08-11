@@ -20,7 +20,7 @@ export const memoryStore = [
     email: 'david@example.com',
     attending: 'yes',
     guestsCount: 2,
-    message: 'Congratulations Jack & Rose! So proud of you both. Blessing you with infinite joy and peace.',
+    message: 'Congratulations Dr. Usama & Dr. Anoosha! So proud of you both. Blessing you with infinite joy and peace.',
     createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
   },
   {
